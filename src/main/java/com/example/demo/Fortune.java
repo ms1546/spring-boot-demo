@@ -5,18 +5,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class Fortune {
-	
+
 	@RequestMapping("/fortune")
 	public String start() {
 		double fn = Math.random();
 		if (fn >= 0.7) {
-			return "greatFortune.html";
+			return "greatFortune";
 		} else if (fn >= 0.4) {
-			return "middleFortune.html";
+			return "middleFortune";
 		} else if (fn >= 0.1) {
-		    return "smallFortune.html";
+		    return "smallFortune";
 		} else {
-			return "misFortune.html";
+			return "misFortune";
 	    }
 	}
 }
