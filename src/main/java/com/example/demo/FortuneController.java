@@ -1,11 +1,10 @@
 package main.java.com.example.demo;
 
+import com.example.demo.model.FortuneResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-
-import com.example.demo.model.FortuneResponse;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class FortuneController {
@@ -18,30 +17,49 @@ public class FortuneController {
             @RequestParam(name = "name", required = false) String name,
             Model model
     ) {
-        String fortuneType = fortuneService.getFortune();
-
+        String fortuneType = fortuneService.getRandomFortune();
         model.addAttribute("name", name);
-
         return fortuneType + ".html";
     }
 
-    /**
-     * JSONを返却するエンドポイント
-     * 例: ブラウザやJavaScriptから "/api/fortune" にアクセス
-     */
+    @RequestMapping("/fortune/today")
+    public String todayFortune(
+            @RequestParam(name = "name", required = false) String name,
+            Model model
+    ) {
+        String fortuneType = fortuneService.getTodayFortune(name);
+        model.addAttribute("name", name);
+        return fortuneType + ".html";
+    }
+
     @GetMapping("/api/fortune")
     @ResponseBody
     public FortuneResponse getFortuneAsJson(
             @RequestParam(name = "name", required = false) String name
     ) {
-        // サービスからフォーチュンの種類を取得
-        String fortuneType = fortuneService.getFortune();
-
-        // 結果をJSON形式で返すため、FortuneResponse に詰める
+        String fortuneType = fortuneService.getRandomFortune();
         FortuneResponse response = new FortuneResponse();
         response.setName(name);
-        response.setResult(fortuneType);  // "greatFortune" など
-
+        response.setResult(fortuneType);
         return response;
+    }
+
+    @GetMapping("/api/fortune/today")
+    @ResponseBody
+    public FortuneResponse getTodayFortuneAsJson(
+            @RequestParam(name = "name", required = false) String name
+    ) {
+        String fortuneType = fortuneService.getTodayFortune(name);
+        FortuneResponse response = new FortuneResponse();
+        response.setName(name);
+        response.setResult(fortuneType);
+        return response;
+    }
+
+    @PostMapping("/api/fortune/clear")
+    @ResponseBody
+    public String clearCache() {
+        fortuneService.clearCache();
+        return "Cleared all fortune cache.";
     }
 }
