@@ -8,41 +8,37 @@ import java.util.Map;
 import java.util.Random;
 
 @Service
+@PropertySource("classpath:application.yml")
+@ConfigurationProperties(prefix = "fortune.rates")
 public class FortuneService {
+    private double great;
+    private double middle;
+    private double small;
+    private double mis;
 
-    private Map<String, String> fortuneCache = new HashMap<>();
-
-    private final Random random = new Random();
+    public double getGreat() { return great; }
+    public void setGreat(double great) { this.great = great; }
+    public double getMiddle() { return middle; }
+    public void setMiddle(double middle) { this.middle = middle; }
+    public double getSmall() { return small; }
+    public void setSmall(double small) { this.small = small; }
+    public double getMis() { return mis; }
+    public void setMis(double mis) { this.mis = mis; }
 
     public String getRandomFortune() {
         double fn = Math.random();
-        if (fn >= 0.7) {
+        double sumGreat = great;
+        double sumMiddle = great + middle;
+        double sumSmall = great + middle + small;
+
+        if (fn <= sumGreat) {
             return "greatFortune";
-        } else if (fn >= 0.4) {
+        } else if (fn <= sumMiddle) {
             return "middleFortune";
-        } else if (fn >= 0.1) {
+        } else if (fn <= sumSmall) {
             return "smallFortune";
         } else {
             return "misFortune";
         }
-    }
-
-    public String getTodayFortune(String userId) {
-        if (userId == null || userId.isEmpty()) {
-            userId = "guest";
-        }
-        String key = userId + "_" + LocalDate.now().toString();
-
-        if (fortuneCache.containsKey(key)) {
-            return fortuneCache.get(key);
-        }
-
-        String result = getRandomFortune();
-        fortuneCache.put(key, result);
-        return result;
-    }
-
-    public void clearCache() {
-        fortuneCache.clear();
     }
 }
