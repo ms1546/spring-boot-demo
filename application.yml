@@ -1,0 +1,6 @@
+fortune:
+  rates:
+    great: 0.10
+    middle: 0.30
+    small: 0.40
+    mis: 0.20
