@@ -25,6 +25,15 @@ public class FortuneService {
     public double getMis() { return mis; }
     public void setMis(double mis) { this.mis = mis; }
 
+    @Cacheable(value = "todayFortune", key = "#name")
+    public String getTodayFortune(String name) {
+        return "bad";
+    }
+
+    @CacheEvict(value = "todayFortune", allEntries = true)
+    public void clearCache() {
+    }
+
     public String getRandomFortune() {
         double fn = Math.random();
         double sumGreat = great;
