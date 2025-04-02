@@ -17,20 +17,21 @@ public class FortuneController {
 
     @GetMapping
     public String showRandomFortune(
-            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "name", defaultValue = "") String name,
             Model model
     ) {
-        String fortuneType = fortuneService.getRandomFortune();
-        model.addAttribute("name", name);
-        return fortuneType + ".html";
+        return renderFortuneView(fortuneService.getRandomFortune(), name, model);
     }
 
     @GetMapping("/today")
     public String showTodayFortune(
-            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "name", defaultValue = "") String name,
             Model model
     ) {
-        String fortuneType = fortuneService.getTodayFortune(name);
+        return renderFortuneView(fortuneService.getTodayFortune(name), name, model);
+    }
+
+    private String renderFortuneView(String fortuneType, String name, Model model) {
         model.addAttribute("name", name);
         return fortuneType + ".html";
     }
