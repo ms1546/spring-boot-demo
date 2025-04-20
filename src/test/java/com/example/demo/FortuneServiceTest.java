@@ -23,6 +23,7 @@ class FortuneServiceTest {
 
     @BeforeEach
     void setUp() {
+
         fortuneService = new FortuneService();
 
         fortuneService.setGreat(0.1);
