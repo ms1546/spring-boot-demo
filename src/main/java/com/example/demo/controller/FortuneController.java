@@ -5,10 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 運勢（Fortune）を表示するコントローラクラス。
- * Thymeleafなどのテンプレートと連携してHTMLを返します。
- */
 @Controller
 @RequestMapping("/fortune")
 public class FortuneController {

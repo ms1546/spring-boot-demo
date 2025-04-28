@@ -2,9 +2,6 @@ package com.example.demo.model;
 
 import java.time.LocalDateTime;
 
-/**
- * 運勢履歴を表すレコードクラス
- */
 public record FortuneHistory(String userName, String fortune, LocalDateTime dateTime) {
 
     public FortuneHistory {

@@ -13,14 +13,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Service
 public class FortuneHistoryService {
-
-    /**
-     * スレッドセーフなコレクションを利用。
-     * - ConcurrentLinkedQueue
-     * - CopyOnWriteArrayList
-     * - Synchronized List
-     * など、要件に応じて選択。
-     */
     private final List<FortuneHistory> historyList = new CopyOnWriteArrayList<>();
 
     /**
