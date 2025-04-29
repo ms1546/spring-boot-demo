@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.FortuneService;
+import com.example.demo.service.FortuneStatisticsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,57 +10,54 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/fortune")
 public class FortuneController {
 
-    private final FortuneService fortuneService;
+    private final FortuneService          fortuneService;
+    private final FortuneStatisticsService statisticsService;
 
-    public FortuneController(FortuneService fortuneService) {
-        this.fortuneService = fortuneService;
+    public FortuneController(FortuneService fortuneService,
+                             FortuneStatisticsService statisticsService) {
+        this.fortuneService    = fortuneService;
+        this.statisticsService = statisticsService;
     }
 
-    /**
-     * ランダムな運勢ページを表示します。
-     * 例: GET /fortune?name=User
-     *
-     * @param name ユーザ名（任意）
-     * @param model Thymeleaf等のViewテンプレートで使用するModel
-     * @return テンプレート名
-     */
     @GetMapping
     public String showRandomFortunePage(
             @RequestParam(name = "name", defaultValue = "") String name,
             Model model
     ) {
-        String fortuneType = fortuneService.getRandomFortune();
-        return buildFortuneView(fortuneType, name, model);
+        return buildFortuneView(fortuneService.getRandomFortune(), name, model);
     }
 
-    /**
-     * 今日の運勢ページを表示します。
-     * 例: GET /fortune/today?name=User
-     *
-     * @param name ユーザ名（任意）
-     * @param model Thymeleaf等のViewテンプレートで使用するModel
-     * @return テンプレート名
-     */
     @GetMapping("/today")
     public String showTodayFortunePage(
             @RequestParam(name = "name", defaultValue = "") String name,
             Model model
     ) {
-        String fortuneType = fortuneService.getTodayFortune(name);
-        return buildFortuneView(fortuneType, name, model);
+        return buildFortuneView(fortuneService.getTodayFortune(name), name, model);
     }
 
-    /**
-     * fortuneType と name をモデルに設定し、対応するテンプレート(HTML)を返す。
-     *
-     * @param fortuneType 運勢の種類（"goodFortune" など）
-     * @param name        ユーザ名
-     * @param model       Viewに渡すModel
-     * @return テンプレート名 (例: "goodFortune.html")
-     */
+    @GetMapping("/stats")
+    public String showTotalStats(Model model) {
+        model.addAttribute("title", "全体の運勢統計");
+        model.addAttribute("stats", statisticsService.getTotalFortuneCounts());
+        model.addAttribute("latest", statisticsService.getLatestHistory().orElse(null));
+        return "stats.html";
+    }
+
+    @GetMapping(value = "/stats", params = "name")
+    public String showUserStats(
+            @RequestParam String name,
+            Model model
+    ) {
+        model.addAttribute("title", name + " さんの運勢統計");
+        model.addAttribute("stats", statisticsService.getUserFortuneCounts(name));
+        model.addAttribute("latest", statisticsService.getLatestHistory().orElse(null));
+        model.addAttribute("name", name);
+        return "stats.html";
+    }
+
     private String buildFortuneView(String fortuneType, String name, Model model) {
         model.addAttribute("name", name);
-        // 運勢の種類をさらに利用したい場合は model.addAttribute("fortuneType", fortuneType); なども可能
+        model.addAttribute("fortuneType", fortuneType);
         return fortuneType + ".html";
     }
 }
