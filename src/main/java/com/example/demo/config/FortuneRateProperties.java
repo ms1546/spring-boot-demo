@@ -10,9 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "fortune.rates")
 public class FortuneRateProperties {
 
-    /**
-     * 各運勢が出る確率（0.0 ~ 1.0 の範囲を想定）
-     */
     private double great;
     private double middle;
     private double small;
