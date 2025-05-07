@@ -24,6 +24,8 @@ public class FortuneHistoryService {
     public void saveHistory(String userName, String fortune) {
         FortuneHistory history = new FortuneHistory(userName, fortune, LocalDateTime.now());
         historyList.add(history);
+
+        broadcastService.broadcast(history);
     }
 
     /**
