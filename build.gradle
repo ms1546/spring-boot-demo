@@ -1,38 +1,51 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.3'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example'
+group   = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly { extendsFrom annotationProcessor }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    /* ── アプリ本体 ───────────────────────── */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'   // ← 追加 (STOMP, SockJS)
+    implementation 'org.springframework.boot:spring-boot-starter-cache'       // ← 追加 (Spring Cache)
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'             // ← 追加 (高速ローカルキャッシュ)
+
+    /* ── 開発補助 ─────────────────────────── */
+    compileOnly          'org.projectlombok:lombok'
+    annotationProcessor  'org.projectlombok:lombok'
+    developmentOnly      'org.springframework.boot:spring-boot-devtools'
+
+    /* ── テスト ───────────────────────────── */
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' {
+        exclude group:'org.junit.vintage', module:'junit-vintage-engine'
+    }
+    testImplementation 'com.jayway.jsonpath:json-path:2.9.0'
+
+    /* WebSocket インテグレーションテスト */
+    testImplementation 'org.springframework:spring-messaging'
+    testImplementation 'org.webjars:sockjs-client:1.5.2'
+    testImplementation 'org.webjars:stomp-websocket:2.3.4'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
