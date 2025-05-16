@@ -13,7 +13,6 @@ version = "0.0.1-SNAPSHOT"
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
-/* ── Spotless (Google Java Format) ─────────── */
 spotless {
     java {
         googleJavaFormat()
@@ -21,39 +20,31 @@ spotless {
     }
 }
 
-/* ── リポジトリ ─────────────────────────── */
 repositories { mavenCentral() }
 
-/* ── 依存関係 ──────────────────────────── */
 dependencies {
-    /* --- アプリ本体 --- */
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
-    /* モニタリング & API Docs */
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
 
-    /* Lombok (可読性向上) */
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    /* --- テスト (unit+mvc) --- */
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage")
     }
     testImplementation("com.jayway.jsonpath:json-path:2.9.0")
 
-    /* --- インテグレーションテスト (WebSocket) --- */
     testImplementation("org.springframework:spring-messaging")
     testImplementation("org.webjars:sockjs-client:1.5.2")
     testImplementation("org.webjars:stomp-websocket:2.3.4")
 }
 
-/* ── サブ SourceSet (integrationTest) ───────── */
 sourceSets {
     create("integrationTest") {
         compileClasspath += sourceSets["main"].output + configurations.testRuntimeClasspath
@@ -65,15 +56,12 @@ sourceSets {
 configurations["integrationTestImplementation"].extendsFrom(configurations.testImplementation.get())
 configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
 
-/* ── タスク設定 ─────────────────────────── */
 tasks {
-    /* 単体・MVC テスト */
     test {
         useJUnitPlatform()
         finalizedBy("jacocoTestReport")
     }
 
-    /* IntegrationTest タスク */
     val integrationTest = register<Test>("integrationTest") {
         description = "Runs Spring Boot with random port and WebSocket tests"
         group = "verification"
@@ -83,7 +71,6 @@ tasks {
         shouldRunAfter("test")
     }
 
-    /* JaCoCo レポート + カバレッジ閾値 */
     jacocoTestReport {
         dependsOn(test)
         reports { xml.required.set(true); html.required.set(true) }
@@ -98,7 +85,6 @@ tasks {
     check { dependsOn("jacocoTestCoverageVerification", integrationTest) }
 }
 
-/* ── Jib: docker build -Pprod でイメージ作成 ─── */
 jib {
     from { image = "eclipse-temurin:17-jre-alpine" }
     to   { image = "ghcr.io/your-org/demo:${project.version}" }
